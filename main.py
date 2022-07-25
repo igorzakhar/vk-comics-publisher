@@ -159,16 +159,19 @@ def main():
 
     comics_filename, alt = download_random_comics(comics_total_number)
 
-    post_comics_on_wall(
-        vk_group_id,
-        vk_token,
-        vk_api_version,
-        comics_filename,
-        alt
-    )
-
-    file_to_remove = Path(comics_filename)
-    file_to_remove.unlink()
+    try:
+        post_comics_on_wall(
+            vk_group_id,
+            vk_token,
+            vk_api_version,
+            comics_filename,
+            alt
+        )
+    except:
+        pass
+    finally:
+        file_to_remove = Path(comics_filename)
+        file_to_remove.unlink()
 
 
 if __name__ == '__main__':
