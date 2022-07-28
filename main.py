@@ -21,7 +21,7 @@ def download_random_comic(total_number):
     response.raise_for_status()
 
     comics_metadata = response.json()
-    img_link = comics_metadata.get("img")
+    img_link = comics_metadata["img"]
 
     alt = comics_metadata.get("alt")
 
@@ -52,9 +52,9 @@ def _upload_comics(base_url, token, api_version, filename):
         upload_response.raise_for_status()
 
     upload_metadata = upload_response.json()
-    server = upload_metadata.get('server')
-    photo = upload_metadata.get('photo')
-    photo_hash = upload_metadata.get('hash')
+    server = upload_metadata['server']
+    photo = upload_metadata['photo']
+    photo_hash = upload_metadata['hash']
 
     return server, photo, photo_hash
 
