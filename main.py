@@ -36,11 +36,10 @@ def download_random_comic(total_number):
     return comics_filename, alt
 
 
-def _upload_comics(base_url, token, api_version, filename):
-    vk_method = 'photos.getWallUploadServer'
+def _upload_comics(token, api_version, filename):
+    api_endpoint = 'https://api.vk.com/method/photos.getWallUploadServer'
     params = {'access_token': token, 'v': api_version}
-    endpoint_url = f'{base_url}{vk_method}'
-    response = requests.get(endpoint_url, params=params)
+    response = requests.get(api_endpoint, params=params)
     response.raise_for_status()
 
     upload_url = response.json()['response']['upload_url']
@@ -59,8 +58,8 @@ def _upload_comics(base_url, token, api_version, filename):
     return server, photo, photo_hash
 
 
-def _save_comics(base_url, token, api_ver, server, photo, photo_hash):
-    vk_method = 'photos.saveWallPhoto'
+def _save_comics(token, api_ver, server, photo, photo_hash):
+    api_endpoint = 'https://api.vk.com/method/photos.saveWallPhoto'
     params = {
         'access_token': token,
         'v': api_ver,
@@ -68,8 +67,7 @@ def _save_comics(base_url, token, api_ver, server, photo, photo_hash):
         'photo': photo,
         'hash': photo_hash,
     }
-    endpoint_url = f'{base_url}{vk_method}'
-    save_photo_response = requests.post(endpoint_url, params=params)
+    save_photo_response = requests.post(api_endpoint, params=params)
     save_photo_response.raise_for_status()
 
     saved_photo_metadata = save_photo_response.json()
@@ -80,8 +78,8 @@ def _save_comics(base_url, token, api_ver, server, photo, photo_hash):
     return owner_id, photo_id
 
 
-def _post_comics(base_url, token, api_ver, group_id, owner_id, photo_id, alt):
-    vk_method = 'wall.post'
+def _post_comics(token, api_ver, group_id, owner_id, photo_id, alt):
+    api_endpoint = 'https://api.vk.com/method/wall.post'
     params = {
         'access_token': token,
         'v': api_ver,
@@ -90,40 +88,16 @@ def _post_comics(base_url, token, api_ver, group_id, owner_id, photo_id, alt):
         'attachments': f'photo{owner_id}_{photo_id}',
         'message': alt,
     }
-    endpoint_url = f'{base_url}{vk_method}'
-    response = requests.get(endpoint_url, params=params)
+    response = requests.get(api_endpoint, params=params)
     response.raise_for_status()
     return response.json()
 
 
-def post_comics_on_wall(group_id, token, api_ver, filename, alt):
-    api_base_url = 'https://api.vk.com/method/'
+def post_comics_on_wall(group_id, token, api_v, filename, alt):
 
-    server, photo, photo_hash = _upload_comics(
-        api_base_url,
-        token,
-        api_ver,
-        filename
-    )
-
-    owner_id, photo_id = _save_comics(
-        api_base_url,
-        token,
-        api_ver,
-        server,
-        photo,
-        photo_hash
-    )
-
-    post_metadata = _post_comics(
-        api_base_url,
-        token,
-        api_ver,
-        group_id,
-        owner_id,
-        photo_id,
-        alt
-    )
+    server, img, img_hash = _upload_comics(token, api_v, filename)
+    owner_id, img_id = _save_comics(token, api_v, server, img, img_hash)
+    post_metadata = _post_comics(token, api_v, group_id, owner_id, img_id, alt)
 
     logging.debug(post_metadata)
 
@@ -157,7 +131,7 @@ def main():
     xkcd_response.raise_for_status()
     comics_total_number = xkcd_response.json().get('num')
 
-    comics_filename, alt = download_random_comics(comics_total_number)
+    comics_filename, alt = download_random_comic(comics_total_number)
 
     try:
         post_comics_on_wall(
