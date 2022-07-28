@@ -12,7 +12,7 @@ import requests
 from dotenv import load_dotenv
 
 
-def download_random_comics(total_number):
+def download_random_comic(total_number):
     random.seed()
     num = random.randint(1, total_number)
     api_url = f'https://xkcd.com/{num}/info.0.json'
