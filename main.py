@@ -141,8 +141,6 @@ def main():
             comics_filename,
             alt
         )
-    except:
-        pass
     finally:
         file_to_remove = Path(comics_filename)
         file_to_remove.unlink()
