@@ -48,7 +48,7 @@ def _upload_comics(token, api_version, filename):
             'photo': fp
         }
         upload_response = requests.post(upload_url, files=files)
-        upload_response.raise_for_status()
+    upload_response.raise_for_status()
 
     upload_metadata = upload_response.json()
     server = upload_metadata['server']
