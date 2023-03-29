@@ -123,9 +123,9 @@ def main():
         format='%(funcName)s() \u2192  %(message)s'
     )
 
-    vk_group_id = os.getenv('VK_GROUP_ID')
-    vk_token = os.getenv('VK_ACCESS_TOKEN')
-    vk_api_version = os.getenv('VK_VERSION_API')
+    vk_group_id = os.environ['VK_GROUP_ID']
+    vk_token = os.environ['VK_ACCESS_TOKEN']
+    vk_api_version = os.environ['VK_VERSION_API']
 
     xkcd_response = requests.get('https://xkcd.com/info.0.json')
     xkcd_response.raise_for_status()
